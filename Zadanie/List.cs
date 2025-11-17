@@ -1,13 +1,30 @@
 ﻿using System;
-using System.Xml.Linq;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Zadanie
 {
-    public class List<T> 
+    public class List<T> : IEnumerable<T>
     {
         private T[] items = new T[0];
         public int Capacity => items.Length;
         public int Count { get; private set; }
+
+        public T this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= Count)
+                    throw new IndexOutOfRangeException();
+                return items[index];
+            }
+            set
+            {
+                if (index < 0 || index >= Count)
+                    throw new IndexOutOfRangeException();
+                items[index] = value;
+            }
+        }
 
         public void Add(T number)
         {
@@ -30,13 +47,15 @@ namespace Zadanie
         {
             for (int i = 0; i < Count; i++)
             {
-                if (items[i].Equals(number) == true)
+                if (items[i] == null ? number == null : items[i].Equals(number))
                 {
-                    for (int j = i; j < Count - 1; j++)
-                    {
-                        items[j] = items[j + 1];
-                    }
                     Count--;
+
+                    if (i < Count)
+                    {
+                        Array.Copy(items, i + 1, items, i, Count - i);
+                    }
+                    items[Count] = default(T);
                     break;
                 }
             }
@@ -65,7 +84,7 @@ namespace Zadanie
                         newCapacity *= 2;
                     }
                     T[] newArray = new T[newCapacity];
-                    Extension(newArray);
+                    Enlargement(newArray);
                     items = newArray;
                 }
                 Count = index + 1;
@@ -81,17 +100,16 @@ namespace Zadanie
                     Array.Copy(items, newArray, Count);
                     items = newArray;
                 }
-
                 for (int i = Count; i > index; i--)
                 {
                     items[i] = items[i - 1];
                 }
-
                 items[index] = item;
                 Count++;
             }
         }
-        void Extension(T[] newArray)
+
+        public void Enlargement(T[] newArray)
         {
             if (Count > 0)
             {
@@ -99,13 +117,35 @@ namespace Zadanie
             }
         }
 
-        public void Show()
+        public IEnumerator<T> GetEnumerator()
         {
             for (int i = 0; i < Count; i++)
             {
-                Console.Write(items[i] + " ");
+                yield return items[i];
             }
-            Console.WriteLine();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
+
+    public static class ListExtension
+    {
+        public static void Shuffle<T>(this List<T> list)
+        {
+            Random random = new Random();
+            int n = list.Count;
+
+            for (int i = n - 1; i > 0; i--)
+            {
+                int randomIndex = random.Next(i + 1);
+
+                T temp = list[i];
+                list[i] = list[randomIndex];
+                list[randomIndex] = temp;
+            }
         }
     }
 }
