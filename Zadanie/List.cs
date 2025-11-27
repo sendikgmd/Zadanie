@@ -133,7 +133,7 @@ namespace Zadanie
 
     public static class ListExtension
     {
-        public static void Shuffle<T>(this List<T> list)
+        public static void Shuffle<T>(this System.Collections.Generic.List<T> list)
         {
             Random random = new Random();
             int n = list.Count;

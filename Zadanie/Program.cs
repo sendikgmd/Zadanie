@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Zadanie
 {
@@ -13,7 +15,6 @@ namespace Zadanie
             list.Add(1);
             list.Add(4);
             list.Add(1);
-            list.Extension();
             foreach (var item in list)
             {
                 Console.WriteLine(item);
